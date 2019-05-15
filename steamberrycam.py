@@ -5,13 +5,17 @@ import numpy
 import imutils
 # use picamera if available
 import importlib
-spam_spec = importlib.util.find_spec( "picamera" )
-use_picam = spam_spec is not None
+spam_spec = None
+
+use_picam = True
 font = cv2.FONT_HERSHEY_SIMPLEX
 
 cam = None
+raw = None
 
 if use_picam :
+
+    print( "using pycam" )
 
     from picamera.array import PiRGBArray
     from picamera import PiCamera
@@ -20,6 +24,7 @@ if use_picam :
     cam.resolution = (640,480)
     cam.framerate = 6
     time.sleep(0.1)
+    raw = PiRGBArray(cam)
 
 else :
 
@@ -35,6 +40,8 @@ sampleCounts={}
 faceSamples=[]
 ids = []
 globalid = 0
+
+learn_mode = False
 
 if os.path.isfile('trainer/trainer.yml') :
     # read up previous dataset
@@ -58,12 +65,12 @@ if os.path.isfile('trainer/trainer.yml') :
 
 while( True ):
 
-    img = None
+    
     if not use_picam :
         ret, img = cam.read()
     else :
-        cam.capture( img , format = "bgr" , use_video_port = True )
-        img = cv2.flip(img, -1) # flip video image vertically
+        cam.capture( raw , format = "bgr" , use_video_port = True )
+        img = imutils.rotate_bound( raw.array , 90 )
 
     # detect faces
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -85,42 +92,11 @@ while( True ):
 
             print( "id " , id , " confidence " , confidence )
 
-        if confidence > 50 :
-
-            id = globalid
-            print( "storing new face" )
-            new_faces = True
-
-            newface = gray[ y : y + h , x : x + w ]
-            rotated = imutils.rotate(newface, 0 )
-
-            for i in range(30) :
-                rotated = imutils.rotate(rotated, 0 )
-                img_numpy = numpy.array( rotated , 'uint8' )
-                faceSamples.append( img_numpy )
-                ids.append( id )    
-                cv2.imwrite( "dataset/User." + str( id ) + "." + str(i) + ".jpg" , rotated )
-            
-            globalid += 1
-            sampleCounts[id] = 30
-
-        else :
-
-            if sampleCounts[id] < 40 :
-                print( "needs more samples (" , sampleCounts[id] , ")" )
-                new_faces = True
-                img_numpy = numpy.array( gray , 'uint8' )
-                faceSamples.append( img_numpy[ y : y + h , x : x + w ] )
-                ids.append( id )
-                cv2.imwrite( "dataset/User." + str( id ) + "." + str(sampleCounts[id]) +  ".jpg" , gray [ y : y + h , x : x + w ] )
-                sampleCounts[id] += 1
-
         # mark face in image
         cv2.rectangle( img , ( x , y ) , ( x + w , y + h ) , ( 255 , 0 , 0 ) , 2 )     
         cv2.putText(img, "Guest" + str(id), (x+5,y-5), font, 1, (255,255,255), 2)
 
     if new_faces :
-        
         if has_dataset :
             face_recognizer.update(faceSamples, numpy.array(ids))
         else :
@@ -128,13 +104,21 @@ while( True ):
         #face_recognizer.write('trainer/trainer.yml')
         has_dataset = True
 
+    if learn_mode:
+        cv2.putText(img, "New Faces", (10,25), font, 1, (255,255,255), 2)
+
     cv2.imshow( 'camera' , img ) 
+
+    raw.truncate(0)
 
     k = cv2.waitKey(10) & 0xff # Press 'ESC' for exiting video
     if k == 27:
         break
+    if k == 0x20: # Space
+        learn_mode = not learn_mode 
 
-    #time.sleep(0.5)
+
+    time.sleep(0.1)
 
 
 
