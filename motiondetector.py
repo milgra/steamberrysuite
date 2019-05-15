@@ -7,7 +7,7 @@ import json
 import time
 import cv2
 
- # import the necessary packages
+# import the necessary packages
 import uuid
 import os
  
@@ -27,8 +27,12 @@ warnings.filterwarnings("ignore")
 conf = json.load(open("motiondetectorconf.json"))
 client = None
 
+spam_spec = None
 import importlib
-spam_spec = importlib.util.find_spec( "picamera" )
+try:
+    spam_spec = importlib.util.find_spec( "picamera" )
+except:
+    print(" ")
 use_picam = spam_spec is not None
 font = cv2.FONT_HERSHEY_SIMPLEX
 
@@ -73,7 +77,7 @@ while( True ):
     timestamp = datetime.datetime.now()
     text = "Unoccupied"
  
-    img = imutils.resize(img, width=500)
+    img = imutils.resize(img, width=640)
 	# resize the frame, convert it to grayscale, and blur it
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (21, 21), 0)
