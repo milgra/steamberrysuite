@@ -6,6 +6,7 @@ import cv2 # for computer vision
 import json # for id/name storing in file
 import time # for waiting for camera
 import numpy # for converting images to xml data
+import random # for selecting random greeting
 import imutils # for image rotation
 
 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -16,6 +17,11 @@ id_to_face = { }
 has_dataset = False
 face_detector = cv2.CascadeClassifier('haarcascade.xml')
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
+
+texts = [ ]
+last_detected_id = 0
+last_text = ""
+last_text_counter = 0
 
 face_ids = [ ]
 face_samples = [ ]
@@ -43,6 +49,12 @@ if os.path.isfile( 'dataset/idtoname.txt' ) :
     last_id = id_to_face[ "0" ]   # highest id is saved to 0
     file.close( )
     print( "\nName to Id pairs loaded, highest id : " + str( last_id ) )
+
+if os.path.isfile( 'greetings.txt' ) :
+    
+    file = open( 'greetings.txt' , 'r' )
+    texts = file.readlines( )
+    print( "\nGreetings loaded"  )
 
 def detectMotion( image , grayScaleImg ):
 
@@ -96,6 +108,9 @@ def detectFaces( image , grayScaleImage ) :
     global face_recognizer
     global face_samples
     global face_ids
+    global last_text
+    global last_detected_id
+    global last_text_counter
 
     faces = face_detector.detectMultiScale( grayScaleImage , 1.3 , 5 )
 
@@ -106,7 +121,6 @@ def detectFaces( image , grayScaleImage ) :
                
             # train new face in case of train mode
             if learn_active is True :
-
 
                 faceImg = grayScaleImage[ y : y + h , x : x + w ]
 
@@ -167,8 +181,18 @@ def detectFaces( image , grayScaleImage ) :
 
                     name = id_to_face[ str( id ) ]
 
-                cv2.putText( image , name + "_" + str( "%.2f" % confidence ) , ( x + 5 , y - 5 ) , font , 1 , ( 255 , 255 , 255 ) , 2 )
+                    if id != last_detected_id :
 
+                        last_detected_id = id
+                        last_text = random.choice( texts )
+                        last_text_counter = 0
+
+                if last_text_counter < 30 :
+                    
+                    last_text_counter += 1    
+                    cv2.putText( image , last_text , ( 0 , 400 ) , font , 1 , ( 255 , 255 , 255 ) , 2 )
+
+                cv2.putText( image , name + "_" + str( "%.2f" % confidence ) , ( x + 5 , y - 5 ) , font , 1 , ( 255 , 255 , 255 ) , 2 )
 
 
 
