@@ -236,4 +236,6 @@ def startDetection( ) :
             print( "\nStarting training..." )
             learn_active = not learn_active 
 
+        time.sleep(0.1)
+
 startDetection()
