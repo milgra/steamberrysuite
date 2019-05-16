@@ -48,20 +48,8 @@ if os.path.isfile('trainer/trainer.yml') :
     face_recognizer.read( 'trainer/trainer.yml' )
     has_dataset = True
 
-    # read up previous global id
-    imagePaths = [os.path.join("dataset",f) for f in os.listdir("dataset")]     
-    for imagePath in imagePaths:
-        id = int(os.path.split(imagePath)[-1].split(".")[1])
-        if id not in sampleCounts :
-            sampleCounts[id] = 0
-        else :
-            sampleCounts[id] += 1
-        print("samplecount for " , id , " : " , sampleCounts[id])
-        if id > globalid :
-            globalid = id
-
-    globalid += 1
-    print( "new globalid " , globalid )
+    # read up names for ids
+    
 
 while( True ):
 
@@ -94,7 +82,7 @@ while( True ):
 
         # mark face in image
         cv2.rectangle( img , ( x , y ) , ( x + w , y + h ) , ( 255 , 0 , 0 ) , 2 )     
-        cv2.putText(img, "Guest" + str(id), (x+5,y-5), font, 1, (255,255,255), 2)
+        cv2.putText( img, "Guest" + str(id), (x+5,y-5), font, 1, (255,255,255), 2)
 
     if new_faces :
         if has_dataset :
