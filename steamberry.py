@@ -4,6 +4,7 @@
 import os # for file handling
 import cv2 # for computer vision
 import json # for id/name storing in file
+import time # for waiting for camera
 import numpy # for converting images to xml data
 import imutils # for image rotation
 
@@ -20,7 +21,7 @@ face_ids = [ ]
 face_samples = [ ]
 
 learn_active = False
-usbcam_active = True
+usbcam_active = False
 
 # read up previous dataset
 
