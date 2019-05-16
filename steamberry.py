@@ -14,14 +14,14 @@ last_id = 1
 sample_count = 0
 id_to_face = { }
 has_dataset = False
-face_detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+face_detector = cv2.CascadeClassifier('haarcascade.xml')
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 
 face_ids = [ ]
 face_samples = [ ]
 
 learn_active = False
-usbcam_active = False
+usbcam_active = True
 
 # read up previous dataset
 
@@ -167,7 +167,7 @@ def detectFaces( image , grayScaleImage ) :
 
                     name = id_to_face[ str( id ) ]
 
-                cv2.putText( image , name + "_" + str( confidence ) , ( x + 5 , y - 5 ) , font , 1 , ( 255 , 255 , 255 ) , 2 )
+                cv2.putText( image , name + "_" + str( "%.2f" % confidence ) , ( x + 5 , y - 5 ) , font , 1 , ( 255 , 255 , 255 ) , 2 )
 
 
 
