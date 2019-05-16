@@ -14,7 +14,7 @@ last_id = 1
 sample_count = 0
 id_to_face = { }
 has_dataset = False
-face_detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+face_detector = cv2.CascadeClassifier('haarcascade.xml')
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 
 face_ids = [ ]
@@ -235,5 +235,7 @@ def startDetection( ) :
         if k == 0x20 and learn_active == False : # Space
             print( "\nStarting training..." )
             learn_active = not learn_active 
+
+        time.sleep(0.1)
 
 startDetection()
