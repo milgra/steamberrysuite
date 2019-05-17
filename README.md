@@ -9,5 +9,10 @@ Works both with Raspberry Cam and  USB Cam.
 Needs OpenCV.
 
 Press ESC to exit.
+
 Press Space to train a new face.
+
 Edit dataset/idtoname.txt to assign names to faces.
+
+Change usbcam_active = True to False if you want to use the raspberry camera.
+
