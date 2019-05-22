@@ -21,7 +21,7 @@ face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 texts = [ ]
 last_detected_id = 0
 last_text = ""
-last_text_counter = 0
+last_text_counter = 30
 
 face_ids = [ ]
 face_samples = [ ]
@@ -54,7 +54,7 @@ if os.path.isfile( 'greetings.txt' ) :
     
     file = open( 'greetings.txt' , 'r' )
     texts = file.readlines( )
-    print( "\nGreetings loaded"  )
+    print( "\nGreetings loaded " )
 
 def detectMotion( image , grayScaleImg ):
 
@@ -176,23 +176,25 @@ def detectFaces( image , grayScaleImage ) :
 
                     id, confidence = face_recognizer.predict( grayScaleImage[ y : y + h , x : x + w ] )
 
-                name = "Guest"
-                if confidence > 0 :
+                name = "Ismeretlen"
+                if confidence < 50 :
 
                     name = id_to_face[ str( id ) ]
 
-                    if id != last_detected_id :
+                    if id != last_detected_id and last_text_counter == 30 :
 
                         last_detected_id = id
-                        last_text = random.choice( texts )
+                        last_text = random.choice( texts )[ :-1 ]
                         last_text_counter = 0
 
-                if last_text_counter < 30 :
-                    
-                    last_text_counter += 1    
-                    cv2.putText( image , last_text , ( 0 , 400 ) , font , 1 , ( 255 , 255 , 255 ) , 2 )
+                size = cv2.getTextSize(name, font, 1, 2)
+                cv2.putText( image , name , ( x + int ( w / 2 - size[0][0] / 2 ) , y - 5 ) , font , 1 , ( 255 , 255 , 255 ) , 2 )
 
-                cv2.putText( image , name + "_" + str( "%.2f" % confidence ) , ( x + 5 , y - 5 ) , font , 1 , ( 255 , 255 , 255 ) , 2 )
+    if last_text_counter < 30 :
+        
+        last_text_counter += 1    
+        size = cv2.getTextSize(last_text, font, 0.8, 2)
+        cv2.putText( image , last_text , ( int ( image.shape[1] / 2 - size[0][0] / 2 ) , 400 ) , font , 0.8 , ( 255 , 255 , 255 ) , 2 )
 
 
 
