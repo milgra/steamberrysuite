@@ -177,7 +177,7 @@ def detectFaces( image , grayScaleImage ) :
                     id, confidence = face_recognizer.predict( grayScaleImage[ y : y + h , x : x + w ] )
 
                 name = "Ismeretlen"
-                if confidence < 50 and has_dataset :
+                if confidence < 90 and has_dataset :
 
                     name = id_to_face[ str( id ) ]
 
