@@ -124,7 +124,8 @@ def detectFaces( image , grayScaleImage ) :
 
                 faceImg = grayScaleImage[ y : y + h , x : x + w ]
 
-                cv2.putText( image , "Saving face as " + str( last_id ) + "_" + str( sample_count ) , ( x + 5 , y - 5 ) , font , 1 , ( 255 , 255 , 255 ) , 2 )
+                cv2.putText( image , "Sample " + str( sample_count ) , ( x + 5 , y - 5 ) , font , 1 , ( 0 , 0 , 0 ) , 5 )
+                cv2.putText( image , "Sample " + str( sample_count ) , ( x + 5 , y - 5 ) , font , 1 , ( 255 , 255 , 255 ) , 2 )
 
                 # Save the captured face into the datasets folder
                 cv2.imwrite( "dataset/User." + str( last_id ) + '.' + str( sample_count ) + ".jpg" , faceImg )
@@ -188,12 +189,14 @@ def detectFaces( image , grayScaleImage ) :
                         last_text_counter = 0
 
                 size = cv2.getTextSize(name, font, 1, 2)
+                cv2.putText( image , name , ( x + int ( w / 2 - size[0][0] / 2 ) , y - 5 ) , font , 1 , ( 0 , 0 , 0 ) , 5 )
                 cv2.putText( image , name , ( x + int ( w / 2 - size[0][0] / 2 ) , y - 5 ) , font , 1 , ( 255 , 255 , 255 ) , 2 )
 
     if last_text_counter < 30 :
         
         last_text_counter += 1    
         size = cv2.getTextSize(last_text, font, 0.8, 2)
+        cv2.putText( image , last_text , ( int ( image.shape[1] / 2 - size[0][0] / 2 ) , 400 ) , font , 0.8 , ( 0 , 0 , 0 ) , 5 )
         cv2.putText( image , last_text , ( int ( image.shape[1] / 2 - size[0][0] / 2 ) , 400 ) , font , 0.8 , ( 255 , 255 , 255 ) , 2 )
 
 
