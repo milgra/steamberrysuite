@@ -145,7 +145,7 @@ def detectFaces( image , grayScaleImage ) :
                     id_to_face[ "0" ] = last_id
 
                     file = open( 'dataset/idtoname.txt' , 'w' )
-                    file.write( json.dumps( id_to_face ) ) 
+                    file.write( json.dumps( id_to_face , sort_keys=True, indent=4 ) ) 
                     file.close( )
 
                     sample_count = 0
